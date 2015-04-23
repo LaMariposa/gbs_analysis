@@ -57,7 +57,7 @@ if ($bcs[0] eq "PstI"){$bc_file .= "/pst1_plate_"}
 	else {print "Uh oh, something is wrong--either the BARCODE in the Plate.csv file is not in the expected format, or a differnt enzyme was used."}
 my @temp = split "Plate", $bcs[1];
 my $platenum;
-if ($bcs[1] ne 10){$platenum="0"}
+if ($temp[1]!=10){$platenum="0"}
 $platenum .= $temp[1];
 $bc_file .= $platenum . ".tab";
 print OUTBC ("#barcode file=",$bc_file, "\n#\n");
