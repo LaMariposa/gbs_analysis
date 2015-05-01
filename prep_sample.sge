@@ -1,0 +1,43 @@
+#!/bin/bash -xe
+
+#prep_sample.sge
+#sge submission script to prepare sequencing reads for SNP calling
+#M. Supple
+#31 March 2015
+
+#usage  
+#qsub prep_reads.sge <infile.fq>
+	#<infile.fq>:  an interleaved fastq file  
+
+
+#sge submission info
+#$ -N prep
+#$ -o prep.output
+#$ -l virtual_free=1.8g,h_vmem=1.9g
+#$ -cwd
+#$ -j y
+
+
+
+#print some sge info
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
+echo input file is $1
+
+#set path for python virtual environment
+path=~/.virtualenvs/gbstrim/bin
+
+#remove adapter contamination with gbstrim
+$path/python $path/gbstrim.py -e CTGCAG -d dimers.txt $1 > tmp-gbstrim.fastq
+
+#merge ovelapping reads with flash
+~/programs/FLASH-1.2.11/flash --interleaved-input (tmp-gbstrim.fastq | -)
+
+#quality filter with sickle
+
+#quality check with fastqc
+
+
+#print note that job completed
+echo done `date`
+
+
