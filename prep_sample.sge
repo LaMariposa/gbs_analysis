@@ -27,15 +27,17 @@ echo input file is $1
 path=~/.virtualenvs/gbstrim/bin
 
 #remove adapter contamination with gbstrim
-$path/python $path/gbstrim.py -e CTGCAG -d dimers.txt $1 > tmp-gbstrim.fastq
+$path/python $path/gbstrim.py -e CTGCAG -d dimers.txt $1 > tmp_clean.fastq
 
-#merge ovelapping reads with flash
-~/programs/FLASH-1.2.11/flash --interleaved-input (tmp-gbstrim.fastq | -)
+#merge ovelapping reads with flash and merge combined and uncombined reads
+~/programs/FLASH-1.2.11/flash -M 70 -I tmp_clean.fastq
+cat out.notCombined.fastq out.extendedFrags.fastq > tmp_cleanmerge.fastq
 
 #quality filter with sickle
+sickle se -x -g -f tmp_cleanmerge.fastq -t sanger -o sample.fastq.gz
 
 #quality check with fastqc
-
+#fastqc sample.fastq.gz
 
 #print note that job completed
 echo done `date`
