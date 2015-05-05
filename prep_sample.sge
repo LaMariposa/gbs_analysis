@@ -34,7 +34,7 @@ $path/python $path/gbstrim.py -e CTGCAG -d dimers.txt $1 > tmp_clean.fastq
 cat out.notCombined.fastq out.extendedFrags.fastq > tmp_cleanmerge.fastq
 
 #quality filter with sickle
-sickle se -x -g -f tmp_cleanmerge.fastq -t sanger -o sample.fastq.gz
+sickle se -x -g -f tmp_cleanmerge.fastq -t sanger -o sample.fastq.gz -l 64
 
 #quality check with fastqc
 #fastqc sample.fastq.gz
