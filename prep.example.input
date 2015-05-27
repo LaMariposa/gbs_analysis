@@ -1,0 +1,18 @@
+#example input file for qc and prepping reads
+
+#input fastq files
+file1=/PATH/TO/FASTQ/FILE/sample_R1_001.fastq.gz
+file2=/PATH/TO/FASTQ/FILE/sample_R2_001.fastq.gz
+
+#fastqc params
+fastqc_outdir=/PATH/TO/DIR/FOR/OUTPUT
+
+#sequencing and sample information
+lane_name=LANE_NAME
+barcode_file=LANE_BARCODES.tab
+
+#user group for output
+user=Eucalyptus
+
+#number of threads to use
+threads=11
