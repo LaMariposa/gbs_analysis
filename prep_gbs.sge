@@ -1,0 +1,48 @@
+#!/bin/bash
+set -xe 
+
+#sge submission info
+#$ -N prep
+#$ -o prep_gbs.output
+#$ -pe threads 11
+#$ -l virtual_free=1.8g,h_vmem=1.9g
+#$ -cwd
+#$ -j y
+
+
+
+#print some sge info
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
+
+#read the input file
+source $1
+
+#run the demultiplex and cleaning pipeline
+bash /borevitz/gbs/code/load_lane.sh  $threads $user $lane_name $barcode_file $file1 $file2
+
+#make output directory for trimmed files
+mkdir trimmed
+
+#cut all reads to 64 bases
+pathfiles="/borevitz/gbs/samples/$user/$lane_name/qc/qc_S*_il.fastq.gz"
+for fullfile in $( ls $pathfiles ); do
+	filename=$(basename "$fullfile")
+	filesize=$( stat -c%s $fullfile )
+	if [ "$filesize" -gt "1000" ]; then
+		gunzip -c $fullfile | ~/programs/bin/fastx_trimmer -Q 33 -l 64 -i -z -o trimmed/trim_$filename
+	else echo $filename
+	fi
+done
+
+
+#print note that job completed
+echo done `date`
+
+
+##example input file
+#user=borevitz
+#lane_name=Emeliodora_Blk1_4
+#barcode_file=Emelliodora_LB_Blocks1234.tab
+##input fastq files
+#file1=/home/gdu/projects/borevitz/reads/raw/Project_SN7001117R_0098_RSB_NAitken_GBS/Sample_Emeliodora_Blk1_4/Emeliodora_Blk1_4_NoIndex_L008_R1_001.fastq.gz
+#file2=/home/gdu/projects/borevitz/reads/raw/Project_SN7001117R_0098_RSB_NAitken_GBS/Sample_Emeliodora_Blk1_4/Emeliodora_Blk1_4_NoIndex_L008_R2_001.fastq.gz
