@@ -54,7 +54,7 @@ my $bc_file = $barcodePlateDir;
 my $bc_plate=$plate_info[1];
 my @bcs = split "Adapter", $bc_plate;
 if ($bcs[0] eq "PstI"){$bc_file .= "/pst1_plate_"}
-	else {print "Uh oh, something is wrong--either the BARCODE in the Plate.csv file is not in the expected format, or a differnt enzyme was used."}
+	else {print "Uh oh, something is wrong--either the BARCODE in the Plate.csv file is not in the expected format, or a different enzyme was used."}
 my @temp = split "Plate", $bcs[1];
 my $platenum;
 if ($temp[1]!=10){$platenum="0"}
