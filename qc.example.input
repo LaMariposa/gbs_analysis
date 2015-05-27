@@ -1,9 +1,0 @@
-#example input file for qc.sge
-
-##input fastq files
-#file1=/PATH/TO/FASTQ/FILE/sample_R1_001.fastq.gz
-#file2=/PATH/TO/FASTQ/FILE/sample_R2_001.fastq.gz
-
-##fastqc params
-#fastqc_outdir=/PATH/TO/DIR/FOR/OUTPUT
-
