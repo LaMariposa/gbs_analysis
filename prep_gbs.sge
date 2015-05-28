@@ -18,7 +18,7 @@ echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
 source $1
 
 #run the demultiplex and cleaning pipeline
-bash /borevitz/gbs/code/load_lane.sh  $threads $user $lane_name $barcode_file $file1 $file2
+#bash /borevitz/gbs/code/load_lane.sh  $threads $user $lane_name $barcode_file $file1 $file2
 
 #make output directory for trimmed files
 mkdir trimmed
@@ -28,9 +28,9 @@ pathfiles="/borevitz/gbs/samples/$user/$lane_name/qc/qc_S*_il.fastq.gz"
 for fullfile in $( ls $pathfiles ); do
 	filename=$(basename "$fullfile")
 	filesize=$( stat -c%s $fullfile )
-	if [ "$filesize" -gt "1000" ]; then
+	if [ "$filesize" -gt "100000" ]; then
 		gunzip -c $fullfile | ~/programs/bin/fastx_trimmer -Q 33 -l 64 -i -z -o trimmed/trim_$filename
-	else echo $filename
+	else echo "$filename failed"
 	fi
 done
 
@@ -39,10 +39,21 @@ done
 echo done `date`
 
 
-##example input file
-#user=borevitz
-#lane_name=Emeliodora_Blk1_4
-#barcode_file=Emelliodora_LB_Blocks1234.tab
+##example input file for qc and prepping reads
+#
 ##input fastq files
-#file1=/home/gdu/projects/borevitz/reads/raw/Project_SN7001117R_0098_RSB_NAitken_GBS/Sample_Emeliodora_Blk1_4/Emeliodora_Blk1_4_NoIndex_L008_R1_001.fastq.gz
-#file2=/home/gdu/projects/borevitz/reads/raw/Project_SN7001117R_0098_RSB_NAitken_GBS/Sample_Emeliodora_Blk1_4/Emeliodora_Blk1_4_NoIndex_L008_R2_001.fastq.gz
+#file1=/PATH/TO/FASTQ/FILE/sample_R1_001.fastq.gz
+#file2=/PATH/TO/FASTQ/FILE/sample_R2_001.fastq.gz
+#
+#fastqc params
+#fastqc_outdir=/PATH/TO/DIR/FOR/OUTPUT
+#
+##sequencing and sample information
+#lane_name=LANE_NAME
+#barcode_file=LANE_BARCODES.tab
+#
+##user group for output
+#user=Eucalyptus
+#
+##number of threads to use
+#threads=11
