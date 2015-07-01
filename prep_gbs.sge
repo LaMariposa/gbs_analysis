@@ -10,7 +10,6 @@ set -xe
 #$ -j y
 
 
-
 #print some sge info
 echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
 
@@ -18,22 +17,7 @@ echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
 source $1
 
 #run the demultiplex and cleaning pipeline
-#bash /borevitz/gbs/code/load_lane.sh  $threads $user $lane_name $barcode_file $file1 $file2
-
-#make output directory for trimmed files
-mkdir trimmed
-
-#cut all reads to 64 bases
-pathfiles="/borevitz/gbs/samples/$user/$lane_name/qc/qc_S*_il.fastq.gz"
-for fullfile in $( ls $pathfiles ); do
-	filename=$(basename "$fullfile")
-	filesize=$( stat -c%s $fullfile )
-	if [ "$filesize" -gt "100000" ]; then
-		gunzip -c $fullfile | ~/programs/bin/fastx_trimmer -Q 33 -l 64 -i -z -o trimmed/trim_$filename
-	else echo "$filename failed"
-	fi
-done
-
+bash /borevitz/gbs/code/load_lane.sh  $threads $user $lane_name $barcode_file $file1 $file2
 
 #print note that job completed
 echo done `date`
