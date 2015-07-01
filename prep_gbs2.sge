@@ -19,7 +19,7 @@ source $1
 #make output directory for trimmed files
 mkdir trimmed
 
-#cut all reads to 64 bases
+# for files > 100000, cut all reads to 64 bases and write to trimmed directory in current directory
 pathfiles="/borevitz/gbs/samples/$user/$lane_name/qc/qc_S*_il.fastq.gz"
 for fullfile in $( ls $pathfiles ); do
 	filename=$(basename "$fullfile")
