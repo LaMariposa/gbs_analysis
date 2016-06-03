@@ -30,7 +30,8 @@ open(OUTBC, ">$out_file");
 open(PLATE, $plateCSV) || die "can't open file with plate information. $!\n";
 
 #print some header info
-print OUTBC ("#plate=", $plateName, "\n#\n");
+print OUTBC ("#plate=", $plateName, "\n#plateDB=", $plateCSV, "\n#sampleDB=", $sampleCSV, "\n#\n");
+
 
 #read in header and print 
 my $line = <PLATE>;
