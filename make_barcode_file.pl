@@ -1,11 +1,17 @@
 #!/usr/bin/perl
 
-#make_barcode_file.pl by M. Supple
+#make_barcode_file.pl 
+#script to generate a barcode file for axe demultiplexing from sample info spread sheets
+#M. Supple
 #created 22 April 2015
 #last modified 22 April 2015
 
-#script to generate a barcode file for axe demultiplexing from sample info spread sheets
 #usage
+#make_barcode_file.pl <PlateName> <plate_db> <sample_db> <barcode_dir>
+
+#output
+#tab delimited file with information on axe demultiplexing
+
 
 #improve by having it search the header to determine the column numbers
 #ugly reformating of cell names
