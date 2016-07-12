@@ -3,7 +3,6 @@
 #make_barcode_file.pl 
 #script to generate a barcode file for axe demultiplexing from sample info spread sheets
 #M. Supple
-#created 22 April 2015
 #last modified 22 April 2015
 
 #usage
