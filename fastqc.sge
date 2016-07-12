@@ -7,7 +7,7 @@
 
 #usage  
 #qsub fastqc.sge <prep.input>
-#<infile>:  see prep.example.input or example at end of this script
+#<prep.input>:  see prep.example.input or example at end of this script
 
 #requires 
 #FastQC
