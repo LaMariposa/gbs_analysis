@@ -16,3 +16,6 @@ user=Eucalyptus
 
 #number of threads to use
 threads=11
+
+#trim length for denovo
+trimlen=64
