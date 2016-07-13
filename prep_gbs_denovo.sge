@@ -3,31 +3,39 @@
 #prep_gbs_denovo.sge
 #sge submission script to finish preparing reads for denovo assembly
 #M. Supple
-#last modified 23 June 2016
+#last modified 13 July 2016
 
 #usage
-#qsub prep_gbs_denovo.sge <user> <lane> <trimlen>
+#qsub prep_gbs_denovo.sge <prep.input>
+#<prep.input>:  see prep.example.input or example at end of this script
+
+#requires
+#seqtk
+#process_radtags (Stacks)
+
+#output
+#single fastq (interleaved, but pairs not maintained) for each sample hard trimmed to specified length
+
+
 
 #sge submission info
-#$ -N prep_denovo
-#$ -o denovoprep.output
+#$ -N prep_gbs_denovo
+#$ -o prep_gbs_denovo.output
 #$ -cwd
 #$ -j y
 
-#usage qsub prep_gbs_denovo.sge <user> <lanename> <trimmlen>
+
 
 #print some sge info
 echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
 
-#read in variables
-user=$1
-lane_name=$2
-bp=$3
+#read in the input file
+source $1
 gbs_path="/borevitz/gbs/samples/"
 
 
 #make output directory for trimmed files
-mkdir $gbs_path/$user/$lane_name/qc_trimmed$bp
+mkdir $gbs_path/$user/$lane_name/qc_trimmed$trimlen
 mkdir tempseqs
 
 #get file info
@@ -45,12 +53,12 @@ for fullfile in $( ls $pathfiles ); do
 done
 
 #remove reads without proper restriction site and hard trim so all reads are the same specified length
-process_radtags -I -p tempseqs/ -e pstI -i gzfastq -t $bp -o $gbs_path/$user/$lane_name/qc_trimmed$bp
+process_radtags -I -p tempseqs/ -e pstI -i gzfastq -t $trimlen -o $gbs_path/$user/$lane_name/qc_trimmed$trimlen
 	#I interleaved
 	#t trim length
 
 #remove files that are too small
-for fullfile in $( ls $gbs_path/$user/$lane_name/qc_trimmed$bp/trim_qc_S*_il.fq.gz ); do
+for fullfile in $( ls $gbs_path/$user/$lane_name/qc_trimmed$trimlen/trim_qc_S*_il.fq.gz ); do
 	filesize=$( stat -c%s $fullfile )
 	if [ "$filesize" -lt "200000" ]; then
 		rm $fullfile
@@ -62,3 +70,10 @@ rm -rf tempseqs/
 
 #print note that job completed
 echo done `date`
+
+##sequencing and sample information
+#lane_name=LANE_NAME
+##user group for output
+#user=Eucalyptus	
+##trim length for denovo
+#trimlen=<64>
