@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#prep_gbs_denovo.sge
+#sge submission script to finish preparing reads for denovo assembly
+#M. Supple
+#last modified 23 June 2016
+
+#usage
+#qsub prep_gbs_denovo.sge <user> <lane> <trimlen>
+
+#sge submission info
+#$ -N prep_denovo
+#$ -o denovoprep.output
+#$ -cwd
+#$ -j y
+
+#usage qsub prep_gbs_denovo.sge <user> <lanename> <trimmlen>
+
+#print some sge info
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
+
+#read in variables
+user=$1
+lane_name=$2
+bp=$3
+gbs_path="/borevitz/gbs/samples/"
+
+
+#make output directory for trimmed files
+mkdir $gbs_path/$user/$lane_name/qc_trimmed$bp
+mkdir tempseqs
+
+#get file info
+pathfiles="$gbs_path/$user/$lane_name/qc/qc_S*_il.fastq.gz"
+
+#process if file > 100000, remove 1bp reads, print to temp directory
+for fullfile in $( ls $pathfiles ); do
+	filename=$(basename "$fullfile")
+	filesize=$( stat -c%s $fullfile )
+	if [ "$filesize" -gt "200000" ]; then
+		#get rid of reads that are just 1 N (they are for maintaining pairs, removing gives better downstream info on improper restriction sites)
+		gunzip -c $fullfile | seqtk seq -L 2 | gzip > tempseqs/trim_$filename		
+	else echo "$filename failed"
+	fi
+done
+
+#remove reads without proper restriction site and hard trim so all reads are the same specified length
+process_radtags -I -p tempseqs/ -e pstI -i gzfastq -t $bp -o $gbs_path/$user/$lane_name/qc_trimmed$bp
+	#I interleaved
+	#t trim length
+
+#remove files that are too small
+for fullfile in $( ls $gbs_path/$user/$lane_name/qc_trimmed$bp/trim_qc_S*_il.fq.gz ); do
+	filesize=$( stat -c%s $fullfile )
+	if [ "$filesize" -lt "200000" ]; then
+		rm $fullfile
+		echo "$(basename "$fullfile") failed"
+	fi
+done
+
+rm -rf tempseqs/
+
+#print note that job completed
+echo done `date`
