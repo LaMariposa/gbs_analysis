@@ -6,9 +6,10 @@
 #last modified 13 July 2016
 
 #usage
-#qsub stacks_params.sge
-#	modify #$ -t 1-81 for number of jobs in array
-#	modify parameter sets below (m,M,n,N)
+#qsub stacks_params.sge <prep.input>
+#<prep.input>:  see prep.example.input or example at end of this script
+#modify #$ -t 1-81 for number of jobs in array
+#modify parameter sets below (m,M,n,N)
 
 #requires
 #Stacks
@@ -89,3 +90,13 @@ vcftools --vcf batch_$SGE_TASK_ID.vcf --recode --out batch_$SGE_TASK_ID --exclud
 #print note that job completed
 echo Job number $SGE_TASK_ID in $JOB_NAME done `date`
 
+
+##example input file
+##sequencing and sample information
+#lane_name=LANE_NAME
+##user group for output
+#user=Eucalyptus	
+##path to data
+#gbs_path="/borevitz/gbs/samples/"
+##trim length for denovo
+#trimlen=<64>
