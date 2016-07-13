@@ -31,7 +31,6 @@ echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
 
 #read in the input file
 source $1
-gbs_path="/borevitz/gbs/samples/"
 
 
 #make output directory for trimmed files
