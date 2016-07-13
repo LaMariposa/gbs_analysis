@@ -74,5 +74,7 @@ echo done `date`
 #lane_name=LANE_NAME
 ##user group for output
 #user=Eucalyptus	
+#path to data
+#gbs_path="/borevitz/gbs/samples/"
 ##trim length for denovo
 #trimlen=<64>
