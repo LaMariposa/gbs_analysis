@@ -17,5 +17,8 @@ user=Eucalyptus
 #number of threads to use
 threads=11
 
+#path to data
+gbs_path="/borevitz/gbs/samples/"
+
 #trim length for denovo
 trimlen=64
