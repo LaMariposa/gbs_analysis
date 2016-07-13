@@ -1,0 +1,91 @@
+#!/bin/bash
+
+#stacks_params.sge
+#sge submission script to run a job array of stacks with a variety of parameter sets
+#M. Supple
+#last modified 13 July 2016
+
+#usage
+#qsub stacks_params.sge
+#	modify #$ -t 1-81 for number of jobs in array
+#	modify parameter sets below (m,M,n,N)
+
+#requires
+#Stacks
+#vcftools
+
+#output
+#vcf file with singletons removed for each parameter set
+
+
+
+#$ -N stacks_params
+#$ -o stacks_params.out
+#$ -pe threads 4
+#$ -l virtual_free=10g,h_vmem=10.1g
+#$ -cwd
+#$ -j y
+#$ -t 1-81
+
+
+
+#print some sge info
+echo Job number $SGE_TASK_ID in $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname`
+
+#read in the input file
+source $1
+
+#set parameters
+m=( 2 3 4 )
+M=( 2 3 4 )
+n=( 1 2 3 )
+N=( 2 3 4 )
+
+
+setn=1
+for ((i=0; i<${#m[@]}; i++))
+	do
+	for ((j=0; j<${#M[@]}; j++))
+		do
+		for ((k=0; k<${#n[@]}; k++))
+			do
+			for ((l=0; l<${#N[@]}; l++))
+				do
+					m_set[$setn]=${m[$i]}
+					M_set[$setn]=${M[$j]}
+					n_set[$setn]=${n[$k]}
+					N_set[$setn]=${N[$l]}
+					((setn++))
+				done
+			done
+		done
+	done
+
+#echo full parameter sets are:
+#echo m=${m_set[@]}
+#echo M=${M_set[@]}
+#echo n=${n_set[@]}
+#echo N=${N_set[@]}
+
+echo Parameter set is m=${m_set[$SGE_TASK_ID]}, M=${M_set[$SGE_TASK_ID]}, n=${n_set[$SGE_TASK_ID]}, N=${N_set[$SGE_TASK_ID]} in directory stacks$SGE_TASK_ID
+
+#generate sample list
+samples=`echo $gbs_path/$user/$lane_name/qc_trimmed$trimlen/trim_qc_S*_il.fq.gz | sed 's/ / -s /g'`
+
+#make output directory
+mkdir stacks$SGE_TASK_ID
+currpath=`pwd`
+
+#run stacks
+denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -N ${N_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
+populations -t 4 -b $SGE_TASK_ID -P $currpath/stacks$SGE_TASK_ID -e pstI --write_single_snp --vcf --plink
+
+#very basic filtering
+cd $currpath/stacks$SGE_TASK_ID
+vcftools --vcf batch_$SGE_TASK_ID.vcf --singletons
+vcftools --vcf batch_$SGE_TASK_ID.vcf --recode --out batch_$SGE_TASK_ID --exclude-positions out.singletons
+
+
+#print note that job completed
+echo Job number $SGE_TASK_ID in $JOB_NAME done `date`
+
