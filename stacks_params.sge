@@ -9,7 +9,7 @@
 #qsub stacks_params.sge <prep.input>
 #<prep.input>:  see prep.example.input or example at end of this script
 #modify #$ -t 1-81 for number of jobs in array
-#modify parameter sets below (m,M,n,N)
+#modify parameter sets below (m,M,n,{N})
 
 #requires
 #Stacks
@@ -40,7 +40,7 @@ source $1
 m=( 2 3 4 )
 M=( 2 3 4 )
 n=( 1 2 3 )
-N=( 2 3 4 )
+#N=( 2 3 4 )
 
 
 setn=1
@@ -50,14 +50,14 @@ for ((i=0; i<${#m[@]}; i++))
 		do
 		for ((k=0; k<${#n[@]}; k++))
 			do
-			for ((l=0; l<${#N[@]}; l++))
-				do
+#			for ((l=0; l<${#N[@]}; l++))
+#				do
 					m_set[$setn]=${m[$i]}
 					M_set[$setn]=${M[$j]}
 					n_set[$setn]=${n[$k]}
-					N_set[$setn]=${N[$l]}
+#					N_set[$setn]=${N[$l]}
 					((setn++))
-				done
+#				done
 			done
 		done
 	done
@@ -68,7 +68,8 @@ for ((i=0; i<${#m[@]}; i++))
 #echo n=${n_set[@]}
 #echo N=${N_set[@]}
 
-echo Parameter set is m=${m_set[$SGE_TASK_ID]}, M=${M_set[$SGE_TASK_ID]}, n=${n_set[$SGE_TASK_ID]}, N=${N_set[$SGE_TASK_ID]} in directory stacks$SGE_TASK_ID
+#echo Parameter set is m=${m_set[$SGE_TASK_ID]}, M=${M_set[$SGE_TASK_ID]}, n=${n_set[$SGE_TASK_ID]}, N=${N_set[$SGE_TASK_ID]} in directory stacks$SGE_TASK_ID
+echo Parameter set is m=${m_set[$SGE_TASK_ID]}, M=${M_set[$SGE_TASK_ID]}, n=${n_set[$SGE_TASK_ID]} in directory stacks$SGE_TASK_ID
 
 #generate sample list
 samples=`echo $gbs_path/$user/$lane_name/qc_trimmed$trimlen/trim_qc_S*_il.fq.gz | sed 's/ / -s /g'`
@@ -78,7 +79,8 @@ mkdir stacks$SGE_TASK_ID
 currpath=`pwd`
 
 #run stacks
-denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -N ${N_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
+#denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -N ${N_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
+denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
 populations -t 4 -b $SGE_TASK_ID -P $currpath/stacks$SGE_TASK_ID -e pstI --write_single_snp --vcf --plink
 
 #very basic filtering
