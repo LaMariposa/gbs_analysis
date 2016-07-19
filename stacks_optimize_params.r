@@ -75,4 +75,4 @@ write(t(final_av),file="stacks_params.output")
 
 max(as.numeric(final_av[,6]), na.rm=T)
 best=which(final_av[,6]==max(as.numeric(final_av[,6]), na.rm=T), arr.ind=T)
-print(paste("optimal batch is",best))
+print(paste("optimal batch is",final_av[best,1]))
