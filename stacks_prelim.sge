@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#stacks_prelim.sge
+#sge submission script to run stacks with chosen parameters
+#M. Supple
+#last modified 21 July 2016
+
+#usage qsub stacks_prelim.sge <prep.input> <m_value> <M_value> <n_value>
+#<prep.input>:  see prep.example.input or example at end of this script
+
+#requires
+#Stacks
+#vcftools
+
+#output
+#vcf file with singletons removed
+
+
+
+#$ -N stacks_prelim
+#$ -o stacks_prelim.output
+#$ -pe threads 11
+#$ -l virtual_free=3g,h_vmem=3.1g
+#$ -j y
+#$ -cwd
+
+#print some useful sge information
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname` 
+
+#get inputs
+source $1
+echo parameter set is m=$2, M=$3, n=$4
+
+#generate sample list
+samples=`echo $gbs_path/$user/$lane_name/qc_trimmed$trimlen/trim_qc_S*_il.fq.gz | sed 's/ / -s /g'`
+
+#make output directory
+mkdir stacks_prelim
+currpath=`pwd`
+
+#run stacks
+denovo_map.pl -m $2 -M $3 -n $4 -T 11 -t -S -b 1 -o $currpath/stacks_prelim -s $samples
+populations -t 11 -b 1 -P $currpath/stacks_prelim -e pstI --write_single_snp --vcf
+
+#very basic filtering
+cd $currpath/stacks_prelim
+vcftools --vcf batch_1.vcf --singletons
+vcftools --vcf batch_1.vcf --recode --out prelim --exclude-positions out.singletons
+
+
+#print note that job completed
+echo done `date`
+
+
+##example input file
+##sequencing and sample information
+#lane_name=LANE_NAME
+##user group for output
+#user=Eucalyptus        
+##path to data
+#gbs_path="/borevitz/gbs/samples/"
+##trim length for denovo
+#trimlen=<64>
+
