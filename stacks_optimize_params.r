@@ -14,7 +14,7 @@ rep1=c(45133:45139)
 rep2=c(45373:45379)
 
 #set output matrix
-final_av=matrix(ncol=6,nrow=0)
+final_av=matrix(ncol=7,nrow=0)
 colnames(final_av)<-c("batch","num_loci","NAs","geno_match","geno_mismatch","error_genoed","error_all")
 
 #loop over the vcf files
