@@ -74,12 +74,12 @@ for(i in vcffile_nums)
 final_av
 write(t(final_av),file="stacks_params.output")
 
-print("error rate over genotyped loci"
+print("error rate over genotyped loci")
 min(as.numeric(final_av[,6]), na.rm=T)
 best=which(final_av[,6]==min(as.numeric(final_av[,6]), na.rm=T), arr.ind=T)
 print(paste("lowest error rate over genotyped loci is batch",final_av[best,1]))
 
-print("error rate over all loci"
+print("error rate over all loci")
 min(as.numeric(final_av[,7]), na.rm=T)
 best=which(final_av[,7]==min(as.numeric(final_av[,7]), na.rm=T), arr.ind=T)
 print(paste("lowest error rate over all loci is batch",final_av[best,1]))
