@@ -15,7 +15,7 @@ rep2=c(45373:45379)
 
 #set output matrix
 final_av=matrix(ncol=6,nrow=0)
-colnames(final_av)<-c("batch","num_loci","NAs","geno_match","geno_mismatch","score")
+colnames(final_av)<-c("batch","num_loci","NAs","geno_match","geno_mismatch","error_genoed","error_all")
 
 #loop over the vcf files
 for(i in vcffile_nums)
@@ -67,12 +67,20 @@ for(i in vcffile_nums)
                         mean(rep_diff[,2],na.rm=T), 
                         mean(rep_diff[,3],na.rm=T), 
                         mean(rep_diff[,4],na.rm=T),
-                        mean(rep_diff[,3],na.rm=T)/(mean(rep_diff[,3],na.rm=T)+mean(rep_diff[,4],na.rm=T))-
-                            mean(rep_diff[,2],na.rm=T)/mean(rep_diff[,1],na.rm=T)))
+                        mean(rep_diff[,4],na.rm=T)/(mean(rep_diff[,3],na.rm=T)+mean(rep_diff[,4],na.rm=T)),
+			mean(rep_diff[,4],na.rm=T)/(mean(rep_diff[,1],na.rm=T))
+			))
     }
 final_av
 write(t(final_av),file="stacks_params.output")
 
-max(as.numeric(final_av[,6]), na.rm=T)
-best=which(final_av[,6]==max(as.numeric(final_av[,6]), na.rm=T), arr.ind=T)
-print(paste("optimal batch is",final_av[best,1]))
+print("error rate over genotyped loci"
+min(as.numeric(final_av[,6]), na.rm=T)
+best=which(final_av[,6]==min(as.numeric(final_av[,6]), na.rm=T), arr.ind=T)
+print(paste("lowest error rate over genotyped loci is batch",final_av[best,1]))
+
+print("error rate over all loci"
+min(as.numeric(final_av[,7]), na.rm=T)
+best=which(final_av[,7]==min(as.numeric(final_av[,7]), na.rm=T), arr.ind=T)
+print(paste("lowest error rate over all loci is batch",final_av[best,1]))
+
