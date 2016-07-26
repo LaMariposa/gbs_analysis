@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#stacks_final.sge
+#sge submission script to run stacks with chosen parameters
+#M. Supple
+#last modified 21 July 2016
+
+#usage qsub stacks_final.sge <m_value> <M_value> <n_value>
+
+#requires
+#Stacks
+#vcftools
+
+#output
+#vcf file with singletons removed
+
+
+
+#$ -N stacks_final
+#$ -o stacks_final.output
+#$ -pe threads 11
+#$ -l virtual_free=3g,h_vmem=3.1g
+#$ -j y
+#$ -cwd
+
+#print some useful sge information
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname` 
+
+#get inputs
+echo parameter set is m=$1, M=$2, n=$3
+
+#make output directory
+mkdir stacks_final
+currpath=`pwd`
+
+#generate sample list
+samples=`echo $currpath/samples/trim_qc_S*_il.fq.gz | sed 's/ / -s /g'`
+
+#run stacks
+denovo_map.pl -m $1 -M $2 -n $3 -T 11 -t -S -b 1 -o $currpath/stacks_final -s $samples
+populations -t 11 -b 1 -P $currpath/stacks_final -e pstI --write_single_snp --vcf
+
+#very basic filtering
+cd $currpath/stacks_prelim
+vcftools --vcf batch_1.vcf --singletons
+vcftools --vcf batch_1.vcf --recode --out prelim --exclude-positions out.singletons
+
+
+#print note that job completed
+echo done `date`
