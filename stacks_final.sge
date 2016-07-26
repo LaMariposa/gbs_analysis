@@ -41,9 +41,9 @@ denovo_map.pl -m $1 -M $2 -n $3 -T 11 -t -S -b 1 -o $currpath/stacks_final -s $s
 populations -t 11 -b 1 -P $currpath/stacks_final -e pstI --write_single_snp --vcf
 
 #very basic filtering
-cd $currpath/stacks_prelim
+cd $currpath/stacks_final
 vcftools --vcf batch_1.vcf --singletons
-vcftools --vcf batch_1.vcf --recode --out prelim --exclude-positions out.singletons
+vcftools --vcf batch_1.vcf --recode --out final --exclude-positions out.singletons
 
 
 #print note that job completed
