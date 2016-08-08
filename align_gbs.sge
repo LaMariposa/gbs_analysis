@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#align_gbs.sge
+#sge submission script to align interleaved fastq gbs files
+#M. Supple
+#last modified 8 August 2016
+
+#usage
+#qsub align_gbs.sge </path/to/in/fastqs/dir/> <path/to/reference/ref.fa>
+	#</path/to/in/fastqs/dir/> is a directory with the input fastq files
+	#<path/to/reference/ref.fa> is the reference sequence
+		#with index (see prep_ref.sge to index the reference)
+
+#requires
+#bwa
+#samtools
+
+#output
+#indexed, sorted, bam for each sample
+
+
+#$ -N align_gbs
+#$ -o align_gbs.output
+#$ -pe threads 6
+#$ -l virtual_free=1.8g,h_vmem=1.9g
+#$ -j y
+#$ -cwd
+
+#print some useful sge information
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname` 
+
+#get input information
+fastqdir=$1
+reference=$2
+
+samples=($(ls $fastqdir/clean_qc_S*_il.fastq.gz)) 
+
+
+for ((a=0; a<${#samples[@]}; a++))
+	do
+
+		echo "aligning sample ${samples[a]}"
+		#get sample ID from filename
+		tempfile=`basename ${samples[a]}`
+		tempid=${tempfile%_il.fastq.gz}
+		sampleID=${tempid#clean_qc_}
+		echo $sampleID
+
+		#align as paired end interleaved
+		bwa mem -p -t 6 -M -R "@RG\tID:$sampleID\tSM:$sampleID\tPL:Illumina" $reference ${samples[a]} > temp.sam
+			#p indicates paired interleaved file
+			#M treats shorter split hits as secondary to make picard markdups happy
+			#t number of threads
+			#R read group info
+
+		#index
+		samtools view -b -o temp.bam temp.sam 
+		samtools sort -o $sampleID.bam temp.bam
+		samtools index $sampleID.bam
+
+	done
+
+#print note that job completed
+echo done `date`
+
+
+
