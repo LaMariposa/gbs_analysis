@@ -26,8 +26,8 @@ my ($head2, $seq2, $qhead2, $qual2);
 
 #read in command line arguments
 my ($infile, $reseq)=@ARGV;
+my $relen=length $reseq;
 
-#open output file
 my @temp=split /\//, $infile;
 my $outfile="clean_" . $temp[-1];
 open(OUTFQ, ">$outfile");
@@ -48,9 +48,9 @@ while ($head1=<INFQ>)
 
 		#check first sequence (keep if just N or has good restriction site
 			#check if sequence is more than just single N
-			if(length $seq1==2 || substr($seq1, 0, 5) eq $reseq)
+			if(length $seq1==2 || substr($seq1, 0, $relen) eq $reseq)
 				{
-					if(length $seq2==2 || substr($seq2, 0, 5) eq $reseq)
+					if(length $seq2==2 || substr($seq2, 0, $relen) eq $reseq)
 						{
 							print OUTFQ $head1;
                                                         print OUTFQ $seq1;
