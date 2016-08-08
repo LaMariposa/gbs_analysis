@@ -6,10 +6,12 @@
 #last modified 8 August 2016
 
 #usage
-#remove_bad_restriction_sites.pl <interleaved_fastq> <proper_read_start>
+#remove_bad_restriction_sites.pl <interleaved_fastq.gz> <proper_read_start>
+	#<interleaved_fastq.gz> is a gzipped interleaved fastq
+	#<proper_read_start> is expected start of each read (PstI=TGCAG)
 
 #output
-#interleaved fastq where read pairs with improper restriction site have been removed
+#gzipped interleaved fastq where read pairs with improper restriction site have been removed
 #file is output in the working directory
 
 
@@ -30,10 +32,11 @@ my $relen=length $reseq;
 
 my @temp=split /\//, $infile;
 my $outfile="clean_" . $temp[-1];
-open(OUTFQ, ">$outfile");
+open(OUTFQ, "| gzip -c >$outfile");
 
 #open input file
-open(INFQ, $infile) || die "can't open input file. $!\n";
+#open(INFQ, $infile) || die "can't open input file. $!\n";
+open INFQ, "gunzip -c $infile |";
 
 while ($head1=<INFQ>)
 	{
@@ -65,4 +68,5 @@ while ($head1=<INFQ>)
 
 	}
 
-
+close INFQ;
+close OUTFQ;
