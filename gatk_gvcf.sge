@@ -39,7 +39,7 @@ cov=4
 for ((a=0; a<${#samples[@]}; a++))
 	do
 
-		echo "aligning sample ${samples[a]}"
+		echo "variant calling sample ${samples[a]}"
 		#get sample ID from filename
 		tempfile=`basename ${samples[a]}`
 		sampleID=${tempfile%.bam}
