@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#gatk_gvcf.sge
+#sge submission script to call variants in each sample (gatk in gvcf mode)
+#M. Supple
+#last modified 9 August 2016
+
+#usage
+#qsub gatk_gvcf.sge </path/to/bams/dir/> <path/to/reference/ref.fa>
+	#</path/to/bams/dir/> is a directory with the input bam files
+	#<path/to/reference/ref.fa> is the reference sequence
+
+#requires
+#gatk
+
+#output
+#gVCF for each sample
+
+
+#$ -N gatk_gvcf
+#$ -o gatk_gvcf.output
+#$ -pe threads 11
+#$ -l virtual_free=1.8g,h_vmem=1.9g
+#$ -j y
+#$ -cwd
+
+#print some useful sge information
+echo Job $JOB_NAME started `date` in queue $QUEUE with id=$JOB_ID on `hostname` 
+
+#get input information
+bamdir=$1
+reference=$2
+
+samples=($(ls $bamdir/S*.bam)) 
+
+
+for ((a=0; a<${#samples[@]}; a++))
+	do
+
+		echo "aligning sample ${samples[a]}"
+		#get sample ID from filename
+		tempfile=`basename ${samples[a]}`
+		sampleID=${tempfile%.bam}
+		echo $sampleID
+
+		#call variants
+		java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
+			-T HaplotypeCaller -nct 11 \
+			-R $reference \
+			-I ${samples[a]} \
+			--emitRefConfidence GVCF \
+			-o $sampleID.g.vcf
+
+	done
+
+#print note that job completed
+echo done `date`
+
+
+
