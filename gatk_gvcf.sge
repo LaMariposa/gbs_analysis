@@ -9,6 +9,7 @@
 #qsub gatk_gvcf.sge </path/to/bams/dir/> <path/to/reference/ref.fa>
 	#</path/to/bams/dir/> is a directory with the input bam files
 	#<path/to/reference/ref.fa> is the reference sequence
+#note: see hardcoded parameters below
 
 #requires
 #gatk
@@ -31,7 +32,9 @@ bamdir=$1
 reference=$2
 
 samples=($(ls $bamdir/S*.bam)) 
-
+$het=0.005
+$indelhet=.0005
+$cov=4
 
 for ((a=0; a<${#samples[@]}; a++))
 	do
@@ -45,6 +48,7 @@ for ((a=0; a<${#samples[@]}; a++))
 		#call variants
 		java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 			-T HaplotypeCaller \
+			-hets $het -indelHeterozygosity $indelhet -minReadsPerAlignStart $cov \
 			-R $reference \
 			-I ${samples[a]} \
 			--emitRefConfidence GVCF \
