@@ -32,9 +32,9 @@ bamdir=$1
 reference=$2
 
 samples=($(ls $bamdir/S*.bam)) 
-$het=0.005
-$indelhet=.0005
-$cov=4
+het=0.005
+indelhet=.0005
+cov=4
 
 for ((a=0; a<${#samples[@]}; a++))
 	do
