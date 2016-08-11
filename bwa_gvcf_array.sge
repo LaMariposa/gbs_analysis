@@ -30,8 +30,8 @@
 #$ -l virtual_free=3.5g,h_vmem=3.6g
 #$ -cwd
 #$ -j y
-#$ -t 1-4
-#$ -tc 3
+#$ -t 1-376
+#$ -tc 20
 
 
 #print some sge info
@@ -59,19 +59,19 @@ echo processing sample ${samples[$i]}
 tempfile=`basename ${samples[$i]}`
 tempid=${tempfile%_il.fastq.gz}
 sampleID=${tempid#clean_qc_}
-echo $sampleID
+echo $sampleID > $sampleID.out 2>&1
 
 #align with bwa as paired end interleaved
-bwa mem -p -t 6 -M -R "@RG\tID:$sampleID\tSM:$sampleID\tPL:Illumina" $reference ${samples[$i]} > $sampleID.sam
+bwa mem -p -t 6 -M -R "@RG\tID:$sampleID\tSM:$sampleID\tPL:Illumina" $reference ${samples[$i]} > $sampleID.sam 2>> $sampleID.out
 	#p indicates paired interleaved file
         #M treats shorter split hits as secondary to make picard markdups happy
         #t number of threads
         #R read group info
 
 #index
-samtools view -b -o $sampleID.temp.bam $sampleID.sam
-samtools sort -o $sampleID.bam $sampleID.temp.bam
-samtools index $sampleID.bam
+samtools view -b -o $sampleID.temp.bam $sampleID.sam 2>> $sampleID.out
+samtools sort -o $sampleID.bam $sampleID.temp.bam 2>> $sampleID.out
+samtools index $sampleID.bam 2>> $sampleID.out
 
 #call variants with gatk in gvcf mode
 java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
@@ -80,7 +80,7 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
         -R $reference \
         -I $sampleID.bam \
         --emitRefConfidence GVCF \
-        -o $sampleID.g.vcf
+        -o $sampleID.g.vcf >> $sampleID.out 2>&1
 
 
 #print note that job completed
