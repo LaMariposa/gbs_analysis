@@ -21,7 +21,8 @@
 #$ -N gatk_genotype
 #$ -o gatk_genotype.output
 #$ -pe threads 11
-#$ -l virtual_free=1.8g,h_vmem=1.9g
+#$ -q hugemem.q
+#$ -l virtual_free=20g,h_vmem=20.1g
 #$ -j y
 #$ -cwd
 
@@ -45,7 +46,7 @@ for ((a=0; a<${#samples[@]}; a++))
 	echo $variants
 
 #call variants
-java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
+java -Xmx150G -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 	-T GenotypeGVCFs -nt 11 \
 	-hets $het -indelHeterozygosity $indelhet \
 	-R $reference \
