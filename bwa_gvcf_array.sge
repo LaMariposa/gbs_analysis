@@ -31,7 +31,7 @@
 #$ -cwd
 #$ -j y
 #$ -t 1-376
-#$ -tc 20
+#$ -tc 50
 
 
 #print some sge info
