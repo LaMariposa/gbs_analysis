@@ -51,11 +51,13 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 	-filterName "mySNPfilter"\
 	-o ${vcf%.vcf}.SNPs.filt.vcf
 
+#remove non-biallelic and failed loci from file
 java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
        -T SelectVariants \
        -R $reference \
        -V ${vcf%.vcf}.SNPs.filt.vcf \
 	--excludeFiltered \
+	--restrictAllelesTo BIALLELIC \
        -o ${vcf%.vcf}.SNPs.filt.pass.vcf
 
 
