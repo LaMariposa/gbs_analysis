@@ -55,7 +55,7 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
        -T SelectVariants \
        -R $reference \
-       -V ${vcf%.vcf}.SNPs.filt.vcf \
+       -V ${vcf%.vcf}.SNPs.prefilt.vcf \
 	--excludeFiltered \
 	--restrictAllelesTo BIALLELIC \
        -o ${vcf%.vcf}.SNPs.prefilt.pass.vcf
