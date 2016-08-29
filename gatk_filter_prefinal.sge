@@ -65,7 +65,7 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
        -T VariantsToTable \
        -R $reference \
        -V ${vcf%.vcf}.SNPs.prefilt.pass.vcf \
-       -F CHROM -F POS -F QUAL -F QD -F MQ -F MQRankSum \
+       -F CHROM -F POS -F QUAL -F AF -F ExcessHet -F InbreedingCoeff -F MQ -F MQRankSum -F QD \
        --allowMissingData \
        -o stats.table
 
