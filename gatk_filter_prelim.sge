@@ -42,13 +42,15 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 	-selectType SNP \
 	-o ${vcf%.vcf}.SNPs.vcf
 
-#filter with default values
+#filter with "default" values and remove sites with no variation relative to the reference
 java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 	-T VariantFiltration \
 	-R $reference \
 	-V ${vcf%.vcf}.SNPs.vcf \
 	-filter "QD < 2.0 || MQ < 40.0 || MQRankSum < -12.5" \
-	-filterName "mySNPfilter"\
+	-filterName "mySNPfilter" \
+       -filter "AF == 1.0" \
+        -filterName "maxMAF" \
 	-o ${vcf%.vcf}.SNPs.filt.vcf
 
 #remove non-biallelic and failed loci from file
