@@ -19,8 +19,8 @@
 
 
 #sge submission info
-#$ -N gatk_filter_prelim
-#$ -o gatk_filter_prelim.output
+#$ -N gatk_filter_prefinal
+#$ -o gatk_filter_prefinal.output
 #$ -l virtual_free=20g,h_vmem=20.1g
 #$ -cwd
 #$ -j y
