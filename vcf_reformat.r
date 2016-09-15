@@ -1,6 +1,6 @@
 
 #vcf input file
-vcffile="test.full.vcf"
+vcffile="final.vcf"
 skipr=5211  #count header lines in command line (grep -c "##" batch_1.vcf)
 skipc=9  #non sample columns
 
