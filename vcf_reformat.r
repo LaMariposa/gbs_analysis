@@ -1,6 +1,7 @@
+setwd("/home/megan/Desktop/emel_lb1234/analysis")
 
 #vcf input file
-vcffile="final.vcf"
+vcffile="/home/megan/Desktop/emel_lb1234/reformat/final.vcf"
 skipr=5211  #count header lines in command line (grep -c "##" batch_1.vcf)
 skipc=9  #non sample columns
 
@@ -53,11 +54,12 @@ print(genos.matrix[1:3,1:5])
 #genos.matrix[genos.matrix == "1/0"] <- "1"
 #genos.matrix[genos.matrix == "0/0"] <- "2"
 
-#put in baypass format
+#put in allele count formats for baypass and gdm
 #initilize matrix
 afs=matrix(, nrow=dim(genos)[2], ncol=length(levels(samples$PopulationName))*2)
 row.names(afs)=loci_names
 pops_double=vector(mode="character", length=length(levels(samples$PopulationName))*2)
+gdm_abund=matrix(,nrow=length(levels(samples$PopulationName)),ncol=dim(genos)[2]*2+3)
 #get population allele frequencies
 #loop over populations
 for (i in 1:length(levels(samples$PopulationName)))
@@ -79,15 +81,21 @@ for (i in 1:length(levels(samples$PopulationName)))
             {print("warning--values do not add up for:")
              print(levels(samples$PopulationName)[i])
             }
-        #print to matrix
+
+        #print to afs matrix
         afs[,i*2-1]=ref_count
         afs[,i*2]=alt_count
         pops_double[i*2-1]=paste(levels(samples$PopulationName)[i],"_A",sep="")
         pops_double[i*2]=paste(levels(samples$PopulationName)[i],"_B",sep="")
+
+        #print to gdm format
+        sitedata=c(levels(samples$PopulationName)[i],samples$Longitude[i],samples$Latitude[i],ref_count,alt_count)
+        gdm_abund[i,]=sitedata
     }
 
 colnames(afs)=pops_double
-write.csv(afs, file="pop_alleles_baypass.csv", row.names=T, col.names=T, append=F, quote=F)
+write.csv(afs, file="pop_alleles_baypass.csv", row.names=T, quote=F)
+write.table(gdm_abund, file="pop_alleles_gdm.csv", sep=",", row.names=F, col.names=F, append=F, quote=F)
 
 #format for input into genid object
 #fix so there is no 0 allele
