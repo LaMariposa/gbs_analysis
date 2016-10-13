@@ -30,8 +30,6 @@
 #$ -l virtual_free=3.5g,h_vmem=3.6g
 #$ -cwd
 #$ -j y
-#$ -t 1-376
-#$ -tc 20
 
 
 #print some sge info
