@@ -80,7 +80,7 @@ currpath=`pwd`
 
 #run stacks
 #denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -N ${N_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
-denovo_map.pl -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
+/home/msupple/programs/bin/denovo_map.pl --gapped -m ${m_set[$SGE_TASK_ID]} -M ${M_set[$SGE_TASK_ID]} -n ${n_set[$SGE_TASK_ID]} -T 4 -t -S -b $SGE_TASK_ID -o $currpath/stacks$SGE_TASK_ID -s $samples
 populations -t 4 -b $SGE_TASK_ID -P $currpath/stacks$SGE_TASK_ID -e pstI --write_single_snp --vcf --plink
 
 #very basic filtering
