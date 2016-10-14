@@ -52,7 +52,7 @@ for fullfile in $( ls $pathfiles ); do
 done
 
 #remove reads without proper restriction site and hard trim so all reads are the same specified length
-process_radtags -I -p tempseqs/ -e pstI -i gzfastq -t $trimlen -o $gbs_path/$user/$lane_name/qc_trimmed$trimlen
+process_radtags -p tempseqs/ -e pstI -i gzfastq -t $trimlen -o $gbs_path/$user/$lane_name/qc_trimmed$trimlen
 	#I interleaved
 	#t trim length
 
