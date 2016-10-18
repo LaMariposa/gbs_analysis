@@ -15,7 +15,6 @@ skipc=9  #non sample columns
 library(adegenet)
 library(stringr)
 library(hierfstat)
-options(jupyter.plot_mimetypes = "image/png")
 
 #read in vcf, skipping ##header rows and removing other junk
 vcf=read.delim(vcffile, sep="\t", header=T, skip=skipr)
@@ -23,9 +22,7 @@ loci_names=paste(vcf[,1],"_",vcf[,2], sep="")     #make locus names (chr_bp)
 vcf=vcf[c(-skipc:-1)]                             #remove non sample columns
 genos=apply(vcf,2,substr,1,3)                     #get just genotypes
 genos=t(genos)                                    #transpose 
-#row.names(genos)=substr(row.names(genos),9,14)   #get just sample ID from stacks data
 colnames(genos)=loci_names                        #add locus names
-genos[1:5,1:4]                                    #print bit to check its ok 
 dim(genos)                                        #print number of samples and loci
 
 #add sample metadata
@@ -47,7 +44,6 @@ dim(samples)
 genos.matrix=genos
 genos.matrix[genos.matrix == "./."] <- "NA"
 write.csv(genos.matrix, file="genos_matrix.csv", row.names=T, col.names=T, append=F, quote=F)
-print(genos.matrix[1:3,1:5])
 
 #alt matrix format encoding
 #0=homoz alt allele #1=heterozygote #2=homoz ref allele
