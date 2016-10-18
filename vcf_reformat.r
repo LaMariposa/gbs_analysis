@@ -1,13 +1,16 @@
-setwd("/home/megan/Desktop/emel_lb1234/analysis")
+#!/usr/local/bin/ Rscript
+args = commandArgs(trailingOnly=TRUE)
 
-#vcf input file
-vcffile="/home/megan/Desktop/emel_lb1234/reformat/final.vcf"
-skipr=5211  #count header lines in command line (grep -c "##" batch_1.vcf)
+#check arguments
+if (length(args)!=4){stop("Oops.  Need 4 arguments (vcffile, skiprows, sampledb, accessiondb)", call.=FALSE)}
+
+vcffile=args[1]
+skipr=args[2]  #count header lines in command line (grep -c "##" final.vcf)
+samplefile=args[3]
+accessionfile=args[4]
+
 skipc=9  #non sample columns
 
-#samples "database"
-samplefile="/home/megan/megan/research/eucalyptus/eucalyptus_data/Emelliodora_PlantsSamples.csv"
-accessionfile="/home/megan/megan/research/eucalyptus/eucalyptus_data/Emelliodora_Accessions.csv"
 
 library(adegenet)
 library(stringr)
