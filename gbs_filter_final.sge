@@ -22,8 +22,7 @@
 #vcftools
 
 #output
-#vcf with filtered SNPs
-
+#vcf with filtered SNPs, thinned and unthinned
 
 
 #sge submission info
@@ -68,10 +67,11 @@ java -jar /home/msupple/programs/GenomeAnalysisTK.jar \
 	--excludeFiltered \
        -o ${vcf%.vcf}.filt2.pass.vcf
 
+#remove loci with too much missing data, but do not thin
+vcftools --vcf ${vcf%.vcf}.filt2.pass.vcf --recode --out final.unthin --max-missing $miss
+
 #remove loci with too much missing data and thin so loci not linked
 vcftools --vcf ${vcf%.vcf}.filt2.pass.vcf --recode --out final --max-missing $miss --thin $thin
-
-
 
 #print note that job completed
 echo done `date`
