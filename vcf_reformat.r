@@ -109,11 +109,11 @@ genos.fst[genos.fst == "1/0"] <- "2/1"
 genos.fst[genos.fst == "0/0"] <- "1/1"
 
 #convert to genid object
-genos.gi <- df2genind(genos.fst,sep="/", NA.char="NA", pop=samples$PopulationName)
+genos.gi <- df2genind(genos.fst,sep="/", missing=NA, pop=samples$PopulationName)
 genos.gi
 
 #basic fstats
-fstat(genos.gi, pop=samples$PopulationName)
+#fstat(genos.gi, pop=samples$PopulationName)
 
 #by locus fstats
 #library(pegas)
@@ -126,7 +126,6 @@ genos.df=as.data.frame(sapply(genos.df[,-1], as.numeric))
 genos.df=cbind(samples$PopulationName,genos.df)
 fst.mat=pairwise.WCfst(genos.df)
 write.csv(fst.mat, file="fst_pop.csv", row.names=T, col.names=T, append=F, quote=F)
-
 #pairwise neis
 #pairwise.fst(genos.gi, pop=samples$PopulationName)
 
