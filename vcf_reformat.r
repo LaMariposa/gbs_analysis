@@ -15,10 +15,13 @@ skipc=9  #non sample columns
 library(adegenet)
 library(stringr)
 library(hierfstat)
+library(MASS)
 
 #read in vcf, skipping ##header rows and removing other junk
 vcf=read.delim(vcffile, sep="\t", header=T, skip=skipr)
-loci_names=paste(vcf[,1],"_",vcf[,2], sep="")     #make locus names (chr_bp)
+loci_names=paste(vcf[,1],"-",vcf[,2], sep="")     #make locus names (chr_bp)
+chroms=vcf[,1]
+posbp=vcf[,2]
 vcf=vcf[c(-skipc:-1)]                             #remove non sample columns
 genos=apply(vcf,2,substr,1,3)                     #get just genotypes
 genos=t(genos)                                    #transpose 
@@ -127,4 +130,45 @@ write.csv(fst.mat, file="fst_pop.csv", row.names=T, col.names=T, append=F, quote
 #pairwise neis
 #pairwise.fst(genos.gi, pop=samples$PopulationName)
 
+#EEMS
+#plink format encoding
+#0=missing #1=ref allele #2=alt allele
+genos.plink=genos
+genos.plink[genos.plink == "./."] <- "0 0"
+genos.plink[genos.plink == "1/1"] <- "2 2"
+genos.plink[genos.plink == "0/1"] <- "1 2"
+genos.plink[genos.plink == "1/0"] <- "2 1"
+genos.plink[genos.plink == "0/0"] <- "1 1"
 
+#check order of samples
+sum(rownames(genos.plink)!=samples$SampleID)
+
+#format for plink ped
+rownames(genos.plink)=NULL
+colnames(genos.plink)=NULL
+info.plink=data.frame(rep(0, times=dim(genos)[1]),samples$SampleID,rep(0, times=dim(genos)[1]),
+                      rep(0, times=dim(genos)[1]),rep(0, times=dim(genos)[1]),rep(0, times=dim(genos)[1]))
+colnames(info.plink)=NULL
+plink.ped=cbind(info.plink,genos.plink)
+colnames(plink.ped)=NULL
+write.matrix(plink.ped, file="plink.ped")
+
+#plink map
+plink.map=data.frame(chroms,loci_names,rep(0, times=dim(genos)[2]),posbp)
+#plink.map=data.frame(do.call(rbind,strsplit(colnames(genos),"_")), colnames(genos),rep(0, times=dim(genos)[2]))
+#plink.map=plink.map[,c("X1","colnames.genos.","rep.0..times...dim.genos..2..","X2")] #order columns
+colnames(plink.map)=NULL
+write.matrix(plink.map, file="plink.map")
+
+#write long/lat to file
+longlat=cbind(samples$Longitude, samples$Latitude)
+write.matrix(longlat, file="eems.coord", sep=" ")
+
+#write polygon file
+maxlong=max(samples$Longitude)+1
+minlong=min(samples$Longitude)-1
+maxlat=max(samples$Latitude)+1
+minlat=min(samples$Latitude)-1
+polyd=c(minlong,minlat,maxlong,minlat,maxlong, maxlat,minlong,maxlat,minlong,minlat)
+poly=matrix(polyd, nrow=5, ncol=2, byrow=T, dimnames=NULL)
+write.matrix(poly, file="eems.outer", sep=" ")
