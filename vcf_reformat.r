@@ -46,7 +46,7 @@ dim(samples)
 #put in matrix format
 genos.matrix=genos
 genos.matrix[genos.matrix == "./."] <- "NA"
-write.csv(genos.matrix, file="genos_matrix.csv", row.names=T, col.names=T, append=F, quote=F)
+write.csv(genos.matrix, file="genos_matrix.csv", row.names=T, quote=F)
 
 #alt matrix format encoding
 #0=homoz alt allele #1=heterozygote #2=homoz ref allele
