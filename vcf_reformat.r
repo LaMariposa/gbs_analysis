@@ -18,6 +18,7 @@ library(hierfstat)
 library(MASS)
 
 #read in vcf, skipping ##header rows and removing other junk
+print("read in vcf")
 vcf=read.delim(vcffile, sep="\t", header=T, skip=skipr)
 loci_names=paste(vcf[,1],"-",vcf[,2], sep="")     #make locus names (chr_bp)
 chroms=vcf[,1]
@@ -29,6 +30,7 @@ colnames(genos)=loci_names                        #add locus names
 dim(genos)                                        #print number of samples and loci
 
 #add sample metadata
+print("read in metadata")
 sampleinfo=read.csv(samplefile, header=T)  #read in sample information
 samplematches=match(sampleinfo$SampleID, rownames(genos))  #subset for just samples in this analysis
 samples=sampleinfo[!is.na(samplematches),][order(na.omit(samplematches)),]
@@ -44,6 +46,7 @@ samples$PopulationName=droplevels(samples$PopulationName) #fix annoying extra le
 dim(samples)
 
 #put in matrix format
+print("matrix format")
 genos.matrix=genos
 genos.matrix[genos.matrix == "./."] <- "NA"
 write.csv(genos.matrix, file="genos_matrix.csv", row.names=T, quote=F)
@@ -57,6 +60,7 @@ write.csv(genos.matrix, file="genos_matrix.csv", row.names=T, quote=F)
 #genos.matrix[genos.matrix == "0/0"] <- "2"
 
 #put in allele count formats for baypass and gdm
+print("allele counts for baypass and gdm")
 #initilize matrix
 afs=matrix(, nrow=dim(genos)[2], ncol=length(levels(samples$PopulationName))*2)
 row.names(afs)=loci_names
@@ -99,6 +103,8 @@ colnames(afs)=pops_double
 write.csv(afs, file="pop_alleles_baypass.csv", row.names=T, quote=F)
 write.table(gdm_abund, file="pop_alleles_gdm.csv", sep=",", row.names=F, col.names=F, append=F, quote=F)
 
+#fst matrix
+print("fst matrix")
 #format for input into genid object
 #fix so there is no 0 allele
 genos.fst=genos
@@ -130,6 +136,7 @@ write.csv(fst.mat, file="fst_pop.csv", row.names=T, col.names=T, append=F, quote
 #pairwise.fst(genos.gi, pop=samples$PopulationName)
 
 #EEMS
+print("plink for eems")
 #plink format encoding
 #0=missing #1=ref allele #2=alt allele
 genos.plink=genos
