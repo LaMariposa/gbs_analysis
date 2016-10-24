@@ -131,7 +131,7 @@ genos.df=genind2df(genos.gi)
 genos.df=as.data.frame(sapply(genos.df[,-1], as.numeric))
 genos.df=cbind(samples$PopulationName,genos.df)
 fst.mat=pairwise.WCfst(genos.df)
-write.csv(fst.mat, file="fst_pop.csv", row.names=T, col.names=T, append=F, quote=F)
+write.csv(fst.mat, file="fst_pop.csv", row.names=T, quote=F)
 #pairwise neis
 #pairwise.fst(genos.gi, pop=samples$PopulationName)
 
@@ -178,3 +178,5 @@ minlat=min(samples$Latitude)-1
 polyd=c(minlong,minlat,maxlong,minlat,maxlong, maxlat,minlong,maxlat,minlong,minlat)
 poly=matrix(polyd, nrow=5, ncol=2, byrow=T, dimnames=NULL)
 write.matrix(poly, file="eems.outer", sep=" ")
+
+print("DONE!")
